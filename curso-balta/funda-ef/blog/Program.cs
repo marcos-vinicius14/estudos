@@ -6,10 +6,44 @@ namespace Blog;
 
 class Program
 {
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
-        using (var context = new BlogDataContext())
+         var user = new User 
+             {
+                  Name = "Marcos",
+                  Slug = "marcosvinicius",
+                  Email = "marcosvinicius@gmail",
+                  Bio = "Desenvolvedor .NET",
+                  Image = "https: foto",
+                  PasswordHash = "123456",
+                  Github = "MarcosVinicius"
+            };
+        using var context = new BlogDataContext();
+
+        var post = context.Posts
+            .Include(x => x.Author)
+                .ThenInclude(x => x.Roles)
+            .Include(x => x.Category);
+
+        foreach (var tag in post)
+
+        // var posts = await GetPosts(context);
+
+        
+
+        // var post = context.Posts.ToListAsync();
+        // var tag = context.Tags.ToListAsync();
+
+        // Console.WriteLine("Teste");
+
+        // context.Users.Add(user);
+        // context.SaveChanges();
+
+        // context.Posts.AsNoTracking();
+
+        // using (var context = new BlogDataContext())
         {
+            
             // var posts = context
             //             .Posts
             //             .AsNoTracking()
@@ -52,18 +86,54 @@ class Program
             // context.Posts.Add(post);
             // context.SaveChanges();
 
-            var post = context
-                        .Posts
-                        .Include(x => x.Author)
-                        .Include(x => x.Category)
-                        .OrderByDescending(x => x.LastUpdateDate)
-                        .FirstOrDefault();
+            // var post = context
+            //             .Posts
+            //             .Include(x => x.Author)
+            //             .Include(x => x.Category)
+            //             .OrderByDescending(x => x.LastUpdateDate)
+            //             .FirstOrDefault();
 
-            post.Author.Name = "Marcos Vinicius";
+            // post.Author.Name = "Marcos Vinicius";
 
-            context.Posts.Update(post);
-            context.SaveChanges();
+            // context.Posts.Update(post);
+            // context.SaveChanges();
+
+            // var user = context.Users.FirstOrDefault();
+            // var post = new Post 
+            // {
+            //     Author = user,
+            //     Body = "Post de teste",
+            //     Category = new Category
+            //     {
+            //         Name = "Backend",
+            //         Slug = "backend-2"
+            //     },
+            //     CreateDate = DateTime.Now,
+            //     LastUpdateDate = DateTime.Now,
+            //     Slug = "Artigo de teste",
+            //     Summary = "Neste artigo vamos conferir",
+            //     Title = "Relacionamentos EF Core"
+            // };
+
+            // context.Posts.Add(post);
+            // context.SaveChanges();
 
         }
     }
+
+    // public static async Task<List<Post>> GetPosts(BlogDataContext context)
+    //     => await context.Posts.ToListAsync();
+
+    public static List<Post> GetPosts(BlogDataContext context, int skip = 0, int take = 25)
+    {
+        var posts = context
+            .Posts
+            .AsNoTracking()
+            .Skip(skip)
+            .Take(take)
+            .ToList();
+        return posts;
+    }
+
+
 }
